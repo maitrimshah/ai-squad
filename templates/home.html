@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>SQUAD - CAR ASSISTANT</h1>
+<table border="1">
+    <tr>
+        <td>Company</td>
+        <td>Part</td>
+        <td>Car</td>
+        <td>Model</td>
+        <td>Model #</td>
+        <td>Colors</td>
+    </tr>
+    {% for model in car_models %}
+    <tr>
+        <td> {{ model.company_name}}</td>
+        <td> {{ model.part_name}}</td>
+        <td> {{ model.car_name}}</td>
+      <td> {{ model.model_name}}</td>
+      <td> {{ model.mode_number}}</td>
+      <td> {{ model.part_color}}</td>
+    </tr>
+    {% endfor %}
+</table>
+    
+
+</body>
+</html>
