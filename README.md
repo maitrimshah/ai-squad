@@ -1,1 +1,3 @@
 # ai-squad
+
+Hackathon project!
