@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table {
+               border: 1px solid black;
+               border-collapse: collapse;
+            }
+            th {
+               border-bottom: 1cm solid black;
+            }
+            td{
+               border-right: 1px solid black;
+               vertical-align: middle;
+            }
+         </style>
+    </head>
+<style>
+   table {
+      border: 1px solid black;
+      border-collapse: collapse;
+   }
+   th {
+      border-bottom: 1px solid black;
+   }
+   td{
+      border-right: 1px solid black;
+      vertical-align: middle;
+   }
+   h5{
+      text-transform: capitalize;
+   }
+</style>
+<body>
+    <h1 style="color: navy;text-align:center;">Damage Detector and Repair Cost Estimator System for Cars</h1>
+    <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024</h3>
+    
+   <h5 style="color: navy;text-align:center;">Brand Name : {{ car_details.brand_name}} </h5> 
+   <h5 style="color: navy;text-align:center;">Car Name : {{ car_details.car_name}} </h5>
+   <h5 style="color: navy;text-align:center;">Model Name : {{ car_details.model_name}} </h5>
+   <h5 style="color: navy;text-align:center;">Model # : {{ car_details.model_number}} </h5>
+   <h5 style="color: navy;text-align:center;">Color : {{ car_details.car_color}} </h5>
+    
+    
+   <table border="1" style="color: navy;" align="center">
+        <tr>
+            <td>Spare Part</td>
+            <td>Exact Cost in INR</td>
+        </tr>
+            {% for spare_part in spare_parts %}
+            <tr>
+                <td align="center"> {{ spare_part.part_name}}</td>
+                <td align="center"> {{ spare_part.exact_spare_part_cost}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+
+</body>
+
+</html>

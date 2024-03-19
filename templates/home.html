@@ -1,28 +1,24 @@
-<!DOCTYPE html>
 <html>
-<body>
-<h1>SQUAD - CAR ASSISTANT</h1>
-<table border="1">
-    <tr>
-        <td>Company</td>
-        <td>Part</td>
-        <td>Car</td>
-        <td>Model</td>
-        <td>Model #</td>
-        <td>Colors</td>
-    </tr>
-    {% for model in car_models %}
-    <tr>
-        <td> {{ model.company_name}}</td>
-        <td> {{ model.part_name}}</td>
-        <td> {{ model.car_name}}</td>
-      <td> {{ model.model_name}}</td>
-      <td> {{ model.mode_number}}</td>
-      <td> {{ model.part_color}}</td>
-    </tr>
-    {% endfor %}
-</table>
-    
-
-</body>
+   <body style="text-align: center;">      
+      <p>
+         {% with messages = get_flashed_messages() %}
+           {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+           {% endif %}
+         {% endwith %}
+      </p>
+      <form enctype="multipart/form-data" action="/upload_files" method="POST">
+         <h1 style="color: navy;text-align:center;">Damage Detector and Repair Cost Estimator System for Cars</h1>
+         <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024</h3>
+         <br>
+         <h4 style="color: navy;text-align:center;">select all the images of car and its spare parts</h4>
+         <input type="file"  style="color: navy;" name="files[]" multiple="true" autocomplete="off" required>
+         <br>   
+            <p> <input type="submit" value="Upload" /> </p>
+      </form>
+   </body>
 </html>
