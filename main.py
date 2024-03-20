@@ -14,6 +14,7 @@ def allowed_file(filename):
 
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
+    brandModel = request.form.get('cars')
     if request.method == 'POST':
         if 'files[]' not in request.files:
             flash('No file part')
@@ -25,22 +26,17 @@ def upload_files():
           if not allowed_file(file.filename):
             return "Received image file is not supported"
         
-      
-        #for file in files:
-          # TO DO - to remove hardcoding related to images,create image array and pass it as arg in line 36 call
-            #flash('File ' + file.name + ' uploaded successfully')
-
-        #flash('All images successfully uploaded')
-        
-        llm_response = llm_generate.generateContent()
+        llm_response = llm_generate.generateContent(brandModel,files)
   
         if llm_response[0]:
             print('car_details')
             print(llm_response[0])
+        
         if llm_response:
             print('spare_parts')
             print(llm_response)
             return render_template('models.html',car_details=llm_response[0],spare_parts=llm_response)
+        
         return "Sever response is not available."
         
     
