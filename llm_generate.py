@@ -63,7 +63,6 @@ Also specify the rear/front/left/right in the spare part names if there is the p
 # promptText = f"""
 # Give summary of cost for search response {response} in Table format also add total for each json element"
 # Final Cost : 
-# """
 # finalCost =  generation_model.predict(
 # promptText, temperature=0.5, top_k=40, top_p=0.8
 # ).text
