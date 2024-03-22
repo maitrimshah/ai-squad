@@ -1,5 +1,8 @@
 <head>
    <style>
+      div {
+         text-align: center;
+      }
       body {
          display: flex;
          align-items: center;
@@ -62,7 +65,6 @@
          margin: auto;
          display: block;
       }
-      
       button {
          padding: 15px;
          border-radius: 10px;
@@ -116,6 +118,8 @@
             {% endfor %}
       </select>
       </div>
+      <label class="form-check-label">License Plate</label> 
+      <input type="text" name="licensePlate" class="licensePlate" maxlength="11" required placeholder="AB03 AB1234"/>
      <!-- <div class="form-check">
          <label class="form-check-label">Color of Vehicle</label> 
          <select name="color_Of_Vehicle" id="color_Of_Vehicle">

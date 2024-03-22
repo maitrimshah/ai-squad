@@ -4,10 +4,11 @@ from google.cloud import bigquery
 import base64
 import vertexai
 import json
+from flask import Flask,flash,request,session,redirect,render_template
 from vertexai.preview.generative_models import GenerativeModel, Part, Image
 import vertexai.preview.generative_models as generative_models
-
-def generateContent(carModel,imageList):#typeOfVehicle,imageList):
+    
+def generateContent(carBrand,carModel,imageList):#typeOfVehicle,imageList):
    
   vertexai.init(project="cap-ai-squad", location="us-west1")
   model = GenerativeModel("gemini-1.0-pro-vision-001")
@@ -56,16 +57,16 @@ def generateContent(carModel,imageList):#typeOfVehicle,imageList):
   
   rs = query_job.result() 
   
-  totalCost = 0;
+  totalCost = 0
   spareParts = []
   for row in rs:
     spareParts.append(Spares(row[0],row[1]))
     totalCost = totalCost + row[1]    
   
-  if spare_part_details:
+  if spareParts:
       print('spare_part_details')
-      print(spare_part_details)
-      return render_template('models.html',spare_part_details=spare_part_details,brand=carBrand,model=carModel,totalSparesCost=totalCost)
+      print(spareParts)
+      return render_template('models.html',spare_part_details=spareParts,carBrand=carBrand,carModel=carModel,totalSparesCost=totalCost)
         
   return "Sever response is not available."
   

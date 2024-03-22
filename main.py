@@ -1,3 +1,4 @@
+from service.InsuranceService import InsuranceService
 from models.VehicleDetails import VehicleDetails
 from google.cloud import bigquery
 from datetime import datetime
@@ -36,7 +37,7 @@ def upload_files():
                 imageList.append(imagebytes)
                 #flash(file.name + " uploaded successfully")
         
-        llm_generate.generateContent(carModel,imageList)
+        return llm_generate.generateContent(carBrand,carModel,imageList)
     
         
 @app.route("/")
@@ -52,5 +53,17 @@ def index():
     
     return render_template('home.html',vehicleDetails=vehicleDetails)
 
+@app.route("/raiseClaim",methods=["POST"])
+def raiseClaim():
+    totalSparesCost = request.form.get('totalSparesCost')
+    
+    client = bigquery.Client()
+    selectQuery = ("select top 1 user_id from users_info where licensePlate='" + request.form.get('licensePlate') + "'")
+    query_job = client.query(selectQuery)  
+    row = query_job.result()  
+    
+    return render_template('raiseClaim.html',totalSparesCost=totalSparesCost,userId=row[0])
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
+    

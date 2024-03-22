@@ -1,16 +1,11 @@
 app = Flask(__name__)
 from flask import Flask, jsonify
 import InsuranceResponse
-    
-@app.route("/raiseClaim",methods=["POST"])
-def raiseClaim():
-    totalSparesCost = request.form.get('totalSparesCost')
-    return render_template('raiseClaim.html',totalSparesCost=totalSparesCost)
 
 @app.route('/submitClaim', methods=['POST'])
 def submitClaim(request):    
     
-    bigDataQuery = "insert into cap-ai-squad.SQUAD_DS.claims_info (Claim Number,User Id,Claim Date,Claim Amount,Coverage Amount,License Plate,Description,Insurance Policy Status,Insurance Company,Insurance Number,Insurance Expiry Date,Included Coverages,Policy Renewal Date) VALUES ( '" + request.User_Id + "','" + request.claimDate + "','" + request.claimAmount + "','" + request.coverageAmount+ "','" +request.licensePlate+ "','" +request.description+ "','" +request.insurancePolicyStatus+ "','" +request.insuranceCompany+ "','" +request.insuranceNumber+ "','" +request.insuranceExpiryDate+ "','" +request.includedCoverages+ "','" +request.policyRenewalDate+ "')" 
+    bigDataQuery = "insert into cap-ai-squad.SQUAD_DS.claims_info (User_Id,Claim_Date,Claim_Amount,Coverage_Amount,License_Plate,Description,Insurance_Policy_Status,Insurance_Company,Insurance_Number,Insurance_Expiry_Date,Included_Coverages,Policy_Renewal_Date) VALUES ( '" + request.User_Id + "','" + request.Claim_Date + "','" + request.Claim_Amount + "','" + request.Coverage_Amount+ "','" +request.License_Plate+ "','" +request.Description+ "','" +request.Insurance_Policy_Status+ "','" +request.Insurance_Company+ "','" +request.Insurance_Number+ "','" +request.Insurance_Expiry_Date+ "','" +request.Included_Coverages+ "','" +request.Policy_Renewal_Date+ "')" 
   
     client = bigquery.Client()
     query_job = client.query(bigDataQuery)  
