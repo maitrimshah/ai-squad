@@ -16,11 +16,8 @@ def allowed_file(filename):
 
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
-    brand = request.form.get('brand')
-    model = request.form.get('model')
-    colorOfVehicle = request.form.get('colorOfVehicle')
-    typeOfVehicle = request.form.get('typeOfVehicle')
-    brandModel = request.form.get('brand') + ' ' + request.form.get('model')
+    carModel = request.form.get('model')
+    carBrand = request.form.get('brand')
     if request.method == 'POST':
         if 'files[]' not in request.files:
             flash('No file part')
@@ -32,47 +29,33 @@ def upload_files():
           if not allowed_file(file.filename):
             return "Received image file is not supported"
           else :
+            imageList = []
             for file in files:
                 fileBytes  = file.stream.read()
                 imagebytes = Image.from_bytes(fileBytes)
-                imageList = []
                 imageList.append(imagebytes)
-                flash(file.name + " uploaded successfully")
+                #flash(file.name + " uploaded successfully")
         
-        spare_part_details = llm_generate.generateContent(brandModel,typeOfVehicle,imageList)
-        
-        if spare_part_details:
-            print('spare_part_details')
-            print(spare_part_details)
-            return render_template('models.html',spare_part_details=spare_part_details,brand=brand,model=model,typeOfVehicle=typeOfVehicle,colorOfVehicle=colorOfVehicle)
-        
-        return "Sever response is not available."
+        llm_generate.generateContent(carModel,imageList)
+    
         
 @app.route("/")
 def index():
     client = bigquery.Client()
-    selectQuery = ('select distinct type_Of_Vehicle from cap-ai-squad.SQUAD_DS.spares_info order by type_Of_Vehicle')
+    selectQuery = ('select brand,model from cap-ai-squad.SQUAD_DS.spares_info where model in (select distinct model from cap-ai-squad.SQUAD_DS.spares_info group by model)')
     query_job = client.query(selectQuery)  
     spares_rs = query_job.result()  
     
     vehicleDetails = []
     for row in spares_rs:
-        vehicleDetails.append(VehicleDetails('','',row[0],''))
+        vehicleDetails.append(VehicleDetails(row[0],row[1]))
     
     return render_template('home.html',vehicleDetails=vehicleDetails)
-    
-@app.route("/getBrand", methods=["GET"])
-def getBrand():
-    typeOfVehicle = request.form.get('typeOfVehicle')
-    client = bigquery.Client()
-    selectQuery = ("select distinct brand from cap-ai-squad.SQUAD_DS.spares_info where type_of_vehicle='"+typeOfVehicle+""order by type_Of_Vehicle')
-    query_job = client.query(selectQuery)  
-    spares_rs = query_job.result()  
-    
-    vehicleDetails = []
-    for row in spares_rs:
-        vehicleDetails.append(VehicleDetails('','',row[0],''))
 
+@app.route("/raiseClaim",methods=["POST"])
+def raiseClaim():
+    totalSparesCost = request.form.get('totalSparesCost')
+    return render_template('raiseClaim.html',totalSparesCost=totalSparesCost)
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

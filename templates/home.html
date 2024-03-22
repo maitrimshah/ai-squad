@@ -1,21 +1,4 @@
 <head>
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-   <script>
-      function getBrand(){
-      var selected = $("#typeOfVehicle option:selected").text();
-      $.ajax({
-         url:"getBrand",
-         method: "GET",
-         data:{"typeOfVehicle":selected},
-         success : function(resp, status){ 
-            console.log("getBrand resp: " + resp + " status:"+ status);
-         }
-      });
-   }
-   </script>
    <style>
       body {
          display: flex;
@@ -109,19 +92,19 @@
    <form enctype="multipart/form-data" action="/upload_files" method="POST">
       <h3>Damage Detector,Repair Cost Estimator and Inventory Management System</h3>
       <h4>Google Gen AI Hackathon 2024</h4>
-      <div class="form-check">
+     <!--  <div class="form-check">
          <label class="form-check-label">Type of Vehicle</label>
          <select name="type_Of_Vehicle" id="type_Of_Vehicle" class="form-select">
             {% for vehicleDetail in vehicleDetails %}
                <option value=<%={{vehicleDetail.type_Of_Vehicle}}%> {{vehicleDetail.type_Of_Vehicle}} </option>
             {% endfor %}
          </select>
-      </div>
+      </div> -->
       <label class="form-check-label">Brand</label> 
       <div class="form-check">
-         <select name="brand" id="brand" onclick="getBrand();">
+         <select name="brand" id="brand"">
             {% for vehicleDetail in vehicleDetails %}
-               <option value=<%={{vehicleDetail.brand}}%> {{vehicleDetail.brand}} </option>
+               <option value={{vehicleDetail.brand}}> {{vehicleDetail.brand}} </option>
             {% endfor %}
          </select>
       </div>
@@ -129,18 +112,18 @@
       <div class="form-check">
          <select name="model" id="model">
             {% for vehicleDetail in vehicleDetails %}
-               <option value=<%={{vehicleDetail.model}}%> {{vehicleDetail.model}} </option>
+               <option value={{vehicleDetail.model}}> {{vehicleDetail.model}} </option>
             {% endfor %}
       </select>
       </div>
-      <div class="form-check">
+     <!-- <div class="form-check">
          <label class="form-check-label">Color of Vehicle</label> 
          <select name="color_Of_Vehicle" id="color_Of_Vehicle">
             {% for vehicleDetail in vehicleDetails %}
                <option value=<%={{vehicleDetail.color_Of_Vehicle}}%> {{vehicleDetail.color_Of_Vehicle}} </option>
             {% endfor %}
          </select>
-      </div>
+      </div>-->
       <h4>Upload multiple images of all damaged spare parts</h4>
       <input type="file"  name="files[]" multiple="true" autocomplete="off" required>
       <input type="submit" value="Upload" /> 
