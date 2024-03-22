@@ -52,10 +52,5 @@ def index():
     
     return render_template('home.html',vehicleDetails=vehicleDetails)
 
-@app.route("/raiseClaim",methods=["POST"])
-def raiseClaim():
-    totalSparesCost = request.form.get('totalSparesCost')
-    return render_template('raiseClaim.html',totalSparesCost=totalSparesCost)
-
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

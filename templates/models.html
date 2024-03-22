@@ -52,10 +52,13 @@
          </tr>
          {% endfor %}
          <tr>
-            <td style="text-align: center;"> {{ spare_part.totalSparesCost}}</td>
+            <td style="text-align: center;" id="totalSparesCost"> {{ spare_part.totalSparesCost}}</td>
          </tr>
       </table>
       <input type="submit" value="Raise Claim" /> 
+
+      <h5 style="color: navy;text-align:center;"> {{ msg }} </h5> 
+
    </form>
 </body>
 </html>
