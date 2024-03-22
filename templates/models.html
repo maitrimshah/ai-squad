@@ -32,27 +32,27 @@
    }
 </style>
 <body>
-   <h1 style="color: navy;text-align:center;">Damage Detector and Repair Cost Estimator System for Cars</h1>
+   <h1 style="color: navy;text-align:center;">Damage Detector,Repair Cost Estimator and Inventory Management System</h1>
    <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024</h3>
     
-   <h5 style="color: navy;text-align:center;">Brand Name : {{ car_details.brand_name}} </h5> 
-   <h5 style="color: navy;text-align:center;">Car Name : {{ car_details.car_name}} </h5>
-   <h5 style="color: navy;text-align:center;">Model Name : {{ car_details.model_name}} </h5>
-   <h5 style="color: navy;text-align:center;">Model # : {{ car_details.model_number}} </h5>
-   <h5 style="color: navy;text-align:center;">Color : {{ car_details.car_color}} </h5>
+   <h5 style="color: navy;text-align:center;">Brand Name : {{ spare_part_details.brand_name}} </h5> 
+   <h5 style="color: navy;text-align:center;">Car Name : {{ spare_part_details.car_name}} </h5>
+   <h5 style="color: navy;text-align:center;">Model Name : {{ spare_part_details.model_name}} </h5>
+   <h5 style="color: navy;text-align:center;">Color : {{ spare_part_details.car_color}} </h5>
     
    <table border="1" style="color: navy;" align="center">
         <tr>
             <td>Spare Part</td>
             <td>Exact Cost in INR</td>
         </tr>
-            {% for spare_part in spare_parts %}
+            {% for spare_part in spare_part_details %}
             <tr>
                 <td align="center"> {{ spare_part.part_name}}</td>
                 <td align="center"> {{ spare_part.exact_spare_part_cost}}</td>
             </tr>
             {% endfor %}
     </table>
+    <button>
 
 </body>
 </html>

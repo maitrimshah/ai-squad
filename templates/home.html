@@ -1,34 +1,149 @@
-<html>
-   <body style="text-align: center;">      
-      <p>
-         {% with messages = get_flashed_messages() %}
-           {% if messages %}
-            <ul class=flashes>
-            {% for message in messages %}
-              <li>{{ message }}</li>
+<head>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+   <script>
+      function getBrand(){
+      var selected = $("#typeOfVehicle option:selected").text();
+      $.ajax({
+         url:"getBrand",
+         method: "GET",
+         data:{"typeOfVehicle":selected},
+         success : function(resp, status){ 
+            console.log("getBrand resp: " + resp + " status:"+ status);
+         }
+      });
+   }
+   </script>
+   <style>
+      body {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-family: sans-serif;
+         line-height: 1.5;
+         min-height: 70vh;
+         flex-direction: row;
+      }
+      
+      form {
+         background-color: #fff;
+         border-radius: 15px;
+         box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+         padding: 10px 20px;
+         transition: transform 0.2s;
+         width: 500px;
+         text-align: center;
+      }
+      h3 {
+         color: navy;
+         text-align: center;
+      }
+      h4{
+         color: navy;
+         text-align: center;
+      }
+      .dropdown {
+         position: relative;
+         display: inline-block;
+      }
+
+      .dropdown-content {
+         display: none;
+         position: absolute;
+         background-color: #f9f9f9;
+         min-width: 160px;
+         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+         padding: 12px 16px;
+         z-index: 1;
+      }
+
+      .dropdown:hover .dropdown-content {
+         display: block;
+      }
+     label {
+         display: block;
+         width: 30%;
+         text-align: left;
+         color: navy
+      }
+      input {
+         color: navy;
+         display: block;
+         width: 50%;
+         padding: 10px;
+         box-sizing: border-box;
+         border: 1px solid #ddd;
+         border-radius: 5px;
+         margin: auto;
+         display: block;
+      }
+      
+      button {
+         padding: 15px;
+         border-radius: 10px;
+         margin-top: 15px;
+         margin-bottom: 15px;
+         border: none;
+         color: navy;
+         cursor: pointer;
+         background-color: grey;
+         width: 100%;
+         font-size: 16px;
+      }
+   </style>
+</head>
+<body>      
+   <p>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+         <ul class=flashes>
+         {% for message in messages %}
+           <li>{{ message }}</li>
+         {% endfor %}
+         </ul>
+        {% endif %}
+      {% endwith %}
+   </p>
+   <form enctype="multipart/form-data" action="/upload_files" method="POST">
+      <h3>Damage Detector,Repair Cost Estimator and Inventory Management System</h3>
+      <h4>Google Gen AI Hackathon 2024</h4>
+      <div class="form-check">
+         <label class="form-check-label">Type of Vehicle</label>
+         <select name="type_Of_Vehicle" id="type_Of_Vehicle" class="form-select">
+            {% for vehicleDetail in vehicleDetails %}
+               <option value=<%={{vehicleDetail.type_Of_Vehicle}}%> {{vehicleDetail.type_Of_Vehicle}} </option>
             {% endfor %}
-            </ul>
-           {% endif %}
-         {% endwith %}
-      </p>
-      <form enctype="multipart/form-data" action="/upload_files" method="POST">
-         <h1 style="color: navy;text-align:center;">Damage Detector and Repair Cost Estimator System for Cars</h1>
-         <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024</h3>
-         <br>
-         <select name="cars" id="cars">
-            <option value="Hyundai Aura">Hyundai Aura</option>
-            <option value="Hyundai Creta">Hyundai Creta</option>
-            <option value="Hyundai Grand i10">Hyundai Grand i10</option>
-            <option value="Hyundai Santro">Hyundai Santro</option>
-            <option value="Hyundai Venue">Hyundai Venue</option>
-            <option value="Hyundai Verna">Hyundai Verna</option>
-            <option value="Hyundai i10">Hyundai i10</option>
-            <option value="Hyundai i20">Hyundai i20</option>
          </select>
-         <h4 style="color: navy;text-align:center;">select all the images of car and its spare parts</h4>
-         <input type="file"  style="color: navy;" name="files[]" multiple="true" autocomplete="off" required>
-         <br>   
-            <p> <input type="submit" value="Upload" /> </p>
-      </form>
-   </body>
+      </div>
+      <label class="form-check-label">Brand</label> 
+      <div class="form-check">
+         <select name="brand" id="brand" onclick="getBrand();">
+            {% for vehicleDetail in vehicleDetails %}
+               <option value=<%={{vehicleDetail.brand}}%> {{vehicleDetail.brand}} </option>
+            {% endfor %}
+         </select>
+      </div>
+      <label class="form-check-label">Model</label> 
+      <div class="form-check">
+         <select name="model" id="model">
+            {% for vehicleDetail in vehicleDetails %}
+               <option value=<%={{vehicleDetail.model}}%> {{vehicleDetail.model}} </option>
+            {% endfor %}
+      </select>
+      </div>
+      <div class="form-check">
+         <label class="form-check-label">Color of Vehicle</label> 
+         <select name="color_Of_Vehicle" id="color_Of_Vehicle">
+            {% for vehicleDetail in vehicleDetails %}
+               <option value=<%={{vehicleDetail.color_Of_Vehicle}}%> {{vehicleDetail.color_Of_Vehicle}} </option>
+            {% endfor %}
+         </select>
+      </div>
+      <h4>Upload multiple images of all damaged spare parts</h4>
+      <input type="file"  name="files[]" multiple="true" autocomplete="off" required>
+      <input type="submit" value="Upload" /> 
+   </form>
+</body>
 </html>

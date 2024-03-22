@@ -1,32 +1,31 @@
+import models.Spares
+import pandas as pd
+from google.cloud import bigquery
 import base64
 import vertexai
 import json
 from vertexai.preview.generative_models import GenerativeModel, Part, Image
-from werkzeug.utils import secure_filename
 import vertexai.preview.generative_models as generative_models
 
-def generateContent(brandModel,files):
-#  print('Calling LLM')
-#  print(brandModel)
-#  print(files)
-  
-  #flash('All images successfully uploaded')
-  for file in files:
-    fileBytes  = file.stream.read()
-    imagebytes = Image.from_bytes(fileBytes)
-    filename = secure_filename(file.filename)
-#    print('----imagebytes----')
-#    print(imagebytes)
-#    print('----filename----')
-#    print(filename)
-  
+def generateContent(brandModel,typeOfVehicle,imageList):
+   
   vertexai.init(project="cap-ai-squad", location="us-west1")
   model = GenerativeModel("gemini-1.0-pro-vision-001")
-  prompt = """Return a json with json value as string or a comma separated string values containing correct and exact full spare parts which are damaged in the car in the attached image.
-Also specify the rear/front/left/right in the spare part names if there is the possibility of those words in the names"""    
+  if typeOfVehicle == '4 Wheelers':
+    prompt = "Identify the damaged spare parts names from the uploaded images of " + brandModel + " and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Air Filter,Bonnet/Hood,Dashboard,Dicky,Disc Brake Front,Disc Brake Rear,Door Panel,Front Brake Pads,Front Bumper,Front Windshield Glass,Fuel Filter,Oil Filter,Rear Brake Pads,Rear Bumper,Rear Windshield Glass,Side View Mirror,Steering Wheel,Fender (Left or Right),Rear Door (Left or Right),Front Door (Left or Right),Tail Light (Left or Right),Headlight (Left or Right)."
+  elif typeOfVehicle == '3 Wheelers':
+    prompt = "Identify the damaged spare parts names from the uploaded images of " + brandModel + " and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Air filter, Alternator,Ball joints,Battery,Body panels,Brake calipers,Brake drums,Brake lines,Brake pads,Brake shoes,Camshaft,Carburetor,Clutch,Connecting rod,Cooling fan,Crankshaft,Cylinder head,Dashboard,Differential,Engine,Exhaust system,Front suspension,Fuel pump,Fuel tank,Gearbox,Headlights,Taillights,Horn,Ignition coil,Indicators,Instruments,Master cylinder,Mirrors,Oil filter,Oil pump,Piston and rings,Radiator,Rear suspension,Seats,Spark plugs,Starter motor,Steering rack,Tie rods,Timing chain,Tyres,Transmission,Voltage regulator,Wheels,Windows,Wiring harness."
+  elif typeOfVehicle == '2 Wheelers':
+    prompt = "Identify the damaged spare parts names from the uploaded images of " + brandModel + " and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Piston,Cylinder Head,Cylinder Block,Crankshaft,Connecting Rod,Cam Chain,Timing Chain,Oil Filter,Air Filter,Spark Plug,Clutch Plates,Gearbox,Final Drive Chain,Front Sprocket,Rear Sprocket,Battery.Starter Motor,Alternator,Regulator Rectifier,Ignition Coil,CDI Unit,Headlight Assembly,Taillight Assembly,Turn Signal Indicators,Horn,Front Fork Assembly,Rear Shock Absorber,Swingarm,Brake Parts,Front Brake Pads,Rear Brake Pads,Front Brake Master Cylinder,Rear Brake Master Cylinder,Brake Disc,Brake Lines,Front Panel,Side Panels,Rear Panel,Seat Assembly,Leg Shield,Floorboard,Fuel Tank,Fuel Pump,Fuel Injector,Radiator,Fan,Engine Oil,Brake Fluid,Coolant"
   
-  responses = model.generate_content(
-    [prompt, imagebytes],
+  contents = [
+    prompt
+  ]
+  
+  for image in imageList :
+    contents.append(image)
+
+  responses = model.generate_content(contents,
     generation_config={
         "max_output_tokens": 2048,
         "temperature": 0.4,
@@ -41,33 +40,26 @@ Also specify the rear/front/left/right in the spare part names if there is the p
     },
     stream=False,
   )
-  print('responses.text')
-  print(responses.text)
-  data = json.loads(responses.text)
-  print('data')
-  print(data)
-  #parts  = str(data["External Damaged Parts"]).strip().removeprefix('[').removesuffix(']').replace("'","")
-  #partsArray  = parts.split(',')
+  content = _clean_json(responses.text)  
+  sparePartNames = json.loads(content)
+  
+  csvPartValuesForQuery = ''
+  for sparePartName in sparePartNames:
+      csvPartValuesForQuery =  csvPartValuesForQuery +  "'" + sparePartName.get('part_name') + "'," 
+  csvPartValuesForQuery = csvPartValuesForQuery[:-1]
     
- # subQuery = ""    
- # for parts in partsArray:
-  #  subQuery =  subQuery +  "lower(spares_sub_type) like %"  + parts + "% or "
-       
-#  finalSubQuery  = " ".join(subQuery.split(' ')[:-2])
-#  bqQuery = 'SELECT car_model,spares_sub_type,spares_cost FROM cap-ai-squad.SQUAD_DS.spares_costs where car_model = ' + brandModel +' and (' + finalSubQuery + ')'    
-#  print('---bqQuery---')
-#  print(bqQuery)
-################ to do write down code here to use Bigquery SDK to return response from BQ Table ##############
-            
-# generation_model = TextGenerationModel.from_pretrained("text-bison@001")
-# promptText = f"""
-# Give summary of cost for search response {response} in Table format also add total for each json element"
-# Final Cost : 
-# finalCost =  generation_model.predict(
-# promptText, temperature=0.5, top_k=40, top_p=0.8
-# ).text
-
-  return render_template('index.html',CostTable =bqQuery)
-
+  bigDataQuery = "select Spares_Sub_Type,Spares_Cost from cap-ai-squad.SQUAD_DS.spares_info where model  = '" + brandModel + "' and initcap(spares_sub_type) in (" + csvPartValuesForQuery + ")"
+  
+  client = bigquery.Client()
+  query_job = client.query(bigDataQuery)  
+  
+  rs = query_job.result() 
+  
+  spareParts = []
+  for row in rs:
+    spareParts.append(Spares(row[1],row[2]))
+  
+  return spareParts;
+  
 def _clean_json(content: str):
-  return content.strip().removeprefix('```').strip().removeprefix('json').removeprefix('JSON').strip().removesuffix('```')
+  return content.strip().replace('json','').replace('JSON','').replace('```','').strip()
