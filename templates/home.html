@@ -1,7 +1,8 @@
 <head>
    <style>
-      div {
-         text-align: center;
+      div{
+         padding-top: 0px;
+         padding-left: 30px;
       }
       body {
          display: flex;
@@ -50,7 +51,7 @@
       }
      label {
          display: block;
-         width: 30%;
+         width: 50%;
          text-align: left;
          color: navy
       }
@@ -92,42 +93,20 @@
       {% endwith %}
    </p>
    <form enctype="multipart/form-data" action="/upload_files" method="POST">
-      <h3>Damage Detector,Repair Cost Estimator and Inventory Management System</h3>
-      <h4>Google Gen AI Hackathon 2024</h4>
-     <!--  <div class="form-check">
-         <label class="form-check-label">Type of Vehicle</label>
-         <select name="type_Of_Vehicle" id="type_Of_Vehicle" class="form-select">
+      <h3>Vehicle Automated Insurance Claim System</h3>
+      <h4>AI SQUAD Team - Google Gen AI Hackathon 2024</h4>
+      
+      <label class="form-check-label">Car Model</label> 
+      <div>
+         <select name="carBrandModel" id="carBrandModel">
             {% for vehicleDetail in vehicleDetails %}
-               <option value=<%={{vehicleDetail.type_Of_Vehicle}}%> {{vehicleDetail.type_Of_Vehicle}} </option>
+               <option value="{{ vehicleDetail.brand }} {{ vehicleDetail.model }}"> {{vehicleDetail.brand}} {{vehicleDetail.model}} </option>
             {% endfor %}
          </select>
-      </div> -->
-      <label class="form-check-label">Brand</label> 
-      <div class="form-check">
-         <select name="brand" id="brand"">
-            {% for vehicleDetail in vehicleDetails %}
-               <option value={{vehicleDetail.brand}}> {{vehicleDetail.brand}} </option>
-            {% endfor %}
-         </select>
-      </div>
-      <label class="form-check-label">Model</label> 
-      <div class="form-check">
-         <select name="model" id="model">
-            {% for vehicleDetail in vehicleDetails %}
-               <option value={{vehicleDetail.model}}> {{vehicleDetail.model}} </option>
-            {% endfor %}
-      </select>
       </div>
       <label class="form-check-label">License Plate</label> 
-      <input type="text" name="licensePlate" class="licensePlate" maxlength="11" required placeholder="AB03 AB1234"/>
-     <!-- <div class="form-check">
-         <label class="form-check-label">Color of Vehicle</label> 
-         <select name="color_Of_Vehicle" id="color_Of_Vehicle">
-            {% for vehicleDetail in vehicleDetails %}
-               <option value=<%={{vehicleDetail.color_Of_Vehicle}}%> {{vehicleDetail.color_Of_Vehicle}} </option>
-            {% endfor %}
-         </select>
-      </div>-->
+      <input type="text" name="licensePlate" id="licensePlate" maxlength="11" readonly value="MH03MS5806"/>
+
       <h4>Upload multiple images of all damaged spare parts</h4>
       <input type="file"  name="files[]" multiple="true" autocomplete="off" required>
       <input type="submit" value="Upload" /> 

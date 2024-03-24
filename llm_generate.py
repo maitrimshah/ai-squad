@@ -1,3 +1,4 @@
+from google.cloud import aiplatform
 from models.Spares import Spares
 import pandas as pd
 from google.cloud import bigquery
@@ -8,67 +9,63 @@ from flask import Flask,flash,request,session,redirect,render_template
 from vertexai.preview.generative_models import GenerativeModel, Part, Image
 import vertexai.preview.generative_models as generative_models
     
-def generateContent(carBrand,carModel,imageList):#typeOfVehicle,imageList):
+def generateContent(carBrandModel,licensePlate,carPrompt):
    
-  vertexai.init(project="cap-ai-squad", location="us-west1")
-  model = GenerativeModel("gemini-1.0-pro-vision-001")
+  vertexai.init(project="cap-ai-squad",location="europe-west1")
+  model =  GenerativeModel("gemini-1.0-pro-vision")
   
-# if typeOfVehicle == '4 Wheelers':
-  prompt = "Can you identify the damages of the " + carModel + " car in attached images and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Air Filter,Bonnet/Hood,Dashboard,Dicky,Disc Brake Front,Disc Brake Rear,Door Panel,Front Brake Pads,Front Bumper,Front Windshield Glass,Fuel Filter,Oil Filter,Rear Brake Pads,Rear Bumper,Rear Windshield Glass,Side View Mirror,Steering Wheel,Fender (Left or Right),Rear Door (Left or Right),Front Door (Left or Right),Tail Light (Left or Right),Headlight (Left or Right)."
-#  elif typeOfVehicle == '3 Wheelers':
-#   prompt = "Identify the damaged spare parts names from the attached images of " + brandModel + " and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Air filter, Alternator,Ball joints,Battery,Body panels,Brake calipers,Brake drums,Brake lines,Brake pads,Brake shoes,Camshaft,Carburetor,Clutch,Connecting rod,Cooling fan,Crankshaft,Cylinder head,Dashboard,Differential,Engine,Exhaust system,Front suspension,Fuel pump,Fuel tank,Gearbox,Headlights,Taillights,Horn,Ignition coil,Indicators,Instruments,Master cylinder,Mirrors,Oil filter,Oil pump,Piston and rings,Radiator,Rear suspension,Seats,Spark plugs,Starter motor,Steering rack,Tie rods,Timing chain,Tyres,Transmission,Voltage regulator,Wheels,Windows,Wiring harness."
-# elif typeOfVehicle == '2 Wheelers':
-#   prompt = "Identify the damaged spare parts names from the attached images of " + brandModel + " and provide the list of damaged spare parts in json format with json key as  part_name and json value as comma separated string. Output json with no nested objects.Wrap json array with [ ] brackets. Return only the valid json string. Also make sure the json values that exactly matches with any of the values from below list : Piston,Cylinder Head,Cylinder Block,Crankshaft,Connecting Rod,Cam Chain,Timing Chain,Oil Filter,Air Filter,Spark Plug,Clutch Plates,Gearbox,Final Drive Chain,Front Sprocket,Rear Sprocket,Battery.Starter Motor,Alternator,Regulator Rectifier,Ignition Coil,CDI Unit,Headlight Assembly,Taillight Assembly,Turn Signal Indicators,Horn,Front Fork Assembly,Rear Shock Absorber,Swingarm,Brake Parts,Front Brake Pads,Rear Brake Pads,Front Brake Master Cylinder,Rear Brake Master Cylinder,Brake Disc,Brake Lines,Front Panel,Side Panels,Rear Panel,Seat Assembly,Leg Shield,Floorboard,Fuel Tank,Fuel Pump,Fuel Injector,Radiator,Fan,Engine Oil,Brake Fluid,Coolant"
+  prompt = "You are auto Expert for Indian Cars,based on the images uploaded of '" + carBrandModel +  """',can you identify which spare parts of the car are damaged in below json format { "External Damaged Parts": [], "Internal Damaged Parts": [], "Fixes for the External Damaged Parts": [], "Fixes for the Internal Damaged Parts": []}. Also make sure identified damaged part should exactly match with one of values from below list in format, { "External Damaged Parts": [Bonnet/Hood,Disc Brake Front], "Internal Damaged Parts": [Front Brake Pads,Filter], "Fixes for the External Damaged Parts": [], "Fixes for the Internal Damaged Parts": []} Air Filter,Bonnet/Hood,Dashboard,Dicky,Disc Brake Front,Disc Brake Rear,Door Panel,Front Brake Pads,Front Bumper,Front Windshield Glass,Fuel Filter,Oil Filter,Rear Brake Pads,Rear Bumper,Rear Windshield Glass,Side View Mirror,Steering Wheel,Fender (Left or Right),Rear Door (Left or Right),Front Door (Left or Right),Tail Light (Left or Right),Headlight (Left or Right)."""
   
-  contents = [
-    prompt
-  ]
-  
-  for image in imageList :
-    contents.append(image)
+  print(prompt)
+  carPrompt.append(prompt)
 
-  responses = model.generate_content(contents,
-     generation_config={
+  responses  = model.generate_content(carPrompt,
+    generation_config={
         "max_output_tokens": 2048,
-        "temperature": 0.4,
-        "top_p": 1,
-        "top_k": 32
-    },
+        "temperature": 0,
+        "top_p": 0,
+        "top_k": 22
+    },                                      
     safety_settings={
-          generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-          generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-          generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-          generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
     },
-    stream=False,
-  )
-  content = _clean_json(responses.text)  
-  sparePartNames = json.loads(content)
+    stream=False,                                  
+  ) 
   
-  csvPartValuesForQuery = ''
-  for sparePartName in sparePartNames:
-      csvPartValuesForQuery =  csvPartValuesForQuery +  "'" + sparePartName.get('part_name') + "'," 
-  csvPartValuesForQuery = csvPartValuesForQuery[:-1]
+  data = json.loads(_clean_json(responses.text))
+  parts1 = str(data["External Damaged Parts"]).strip().replace('[','').replace(']','').replace("'","")
+  parts2 = str(data["Internal Damaged Parts"]).strip().replace('[','').replace(']','').replace("'","")
+  
+  parts = parts1 + parts2
+  
+  partsarray  = parts.split(',')
+
+  print(partsarray)
+  subQuery = ''
+  for parts in partsarray:
+      subQuery =  subQuery +  "'" + parts + "'," 
+  subQuery = subQuery[:-1]
+  
+  bqQuery = "select Spares_Sub_Type part_name,Spares_Cost part_cost from cap-ai-squad.SQUAD_DS.spares_info where concat(brand,'"+ " " +"',model) = '" + carBrandModel + "' and initcap(spares_sub_type) in (" + subQuery + ")"
     
-  bigDataQuery = "select Spares_Sub_Type,Spares_Cost from cap-ai-squad.SQUAD_DS.spares_info where model  = '" + carModel + "' and initcap(spares_sub_type) in (" + csvPartValuesForQuery + ")"
-  
   client = bigquery.Client()
-  query_job = client.query(bigDataQuery)  
-  
-  rs = query_job.result() 
-  
-  totalCost = 0
+  query_job = client.query(bqQuery)  
+  rows = query_job.result()  
+
+  totalSparesCost = 0
   spareParts = []
-  for row in rs:
-    spareParts.append(Spares(row[0],row[1]))
-    totalCost = totalCost + row[1]    
-  
+  for row in rows:
+    spareParts.append(Spares(row[0],row[1]))  
+    totalSparesCost = totalSparesCost + row[1]    
+         
   if spareParts:
-      print('spare_part_details')
-      print(spareParts)
-      return render_template('models.html',spare_part_details=spareParts,carBrand=carBrand,carModel=carModel,totalSparesCost=totalCost)
-        
-  return "Sever response is not available."
+    print('spare_part_details')
+    print(spareParts)
+    
+  return render_template('models.html',spare_part_details=spareParts,carBrandModel=carBrandModel,totalSparesCost=totalSparesCost,licensePlate=licensePlate)
   
 def _clean_json(content: str):
   return content.strip().replace('json','').replace('JSON','').replace('```','').strip()

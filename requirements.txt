@@ -1,3 +1,10 @@
-Flask==2.1.2
-Werkzeug==2.2.2
-google-cloud-aiplatform==1.25.0
+#Flask==2.1.2
+#Werkzeug==2.2.2
+#google-cloud-aiplatform==1.25.0
+
+Flask==2.3.3
+requests==2.31.0
+debugpy # Required for debugging.
+Werkzeug
+google-cloud-aiplatform
+google-cloud-discoveryengine

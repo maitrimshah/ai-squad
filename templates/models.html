@@ -2,6 +2,85 @@
 <html>
     <head>
         <style>
+            div{
+               padding-top: 0px;
+               padding-left: 30px;
+            }
+            body {
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               font-family: sans-serif;
+               line-height: 1.5;
+               min-height: 70vh;
+               flex-direction: row;
+           }
+               
+         form {
+               background-color: #fff;
+               border-radius: 15px;
+               box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+               padding: 10px 20px;
+               transition: transform 0.2s;
+               width: 500px;
+               text-align: center;
+            }
+            h3 {
+               color: navy;
+               text-align: center;
+            }
+            h4{
+               color: navy;
+               text-align: center;
+            }
+            .dropdown {
+               position: relative;
+               display: inline-block;
+            }
+
+            .dropdown-content {
+               display: none;
+               position: absolute;
+               background-color: #f9f9f9;
+               min-width: 160px;
+               box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+               padding: 12px 16px;
+               z-index: 1;
+            }
+
+            .dropdown:hover {
+              display: block;
+            }
+            label {
+                  display: block;
+                  width: 50%;
+                  text-align: left;
+                  color: navy
+               }
+               input {
+                  color: navy;
+                  display: block;
+                  width: 50%;
+                  padding: 10px;
+                  box-sizing: border-box;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  margin: auto;
+                  display: block;
+               }
+               button {
+                  outline-color: black;
+                  padding: 15px;
+                  border-radius: 10px;
+                  margin-top: 15px;
+                  margin-bottom: 15px;
+                  border: none;
+                  color: navy;
+                  cursor: pointer;
+                  background-color: grey;
+                  width: 100%;
+                  font-size: 16px;
+               }
             label {
                display: block;
                width: 30%;
@@ -10,7 +89,8 @@
             }
             h4{
                color: navy;
-               text-align: center;
+               text-align: left;
+               padding-left: 20px;
             }  
             button {
                padding: 15px;
@@ -37,45 +117,35 @@
                border-right: 1px solid black;
                vertical-align: middle;
             }
-            input {
-               color: navy;
-               display: block;
-               width: 10%;
-               padding: 10px;
-               box-sizing: border-box;
-               border: 1px solid #ddd;
-               border-radius: 5px;
-               margin: auto;
-               display: block;
-            }
+           
          </style>
     </head>
    <body>
       <form enctype="multipart/form-data" action="/raiseClaim" method="POST">
-         <h1 style="color: navy;text-align:center;">Damage Detector,Repair Cost Estimator and Inventory Management System</h1>
-         <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024 </h3>
+         <h3>Vehicle Automated Insurance Claim System</h3>
+         <h4>AI SQUAD Team - Google Gen AI Hackathon 2024</h4>
          
-         <h4 style="color: navy;text-align:center;">Brand : {{ carBrand }} </h4> 
-         <h4 style="color: navy;text-align:center;">Model : {{ carModel }} </h4>
-         <h4 style="color: navy;text-align:center;">license Plate : {{ licensePlate }} </h4>
-         
+         <h4>Car Model : {{ carBrandModel }} </h4> 
+         <h4>License Plate : {{ licensePlate }} </h4>
+         <input type="hidden" id="carBrandModel" name="carBrandModel" value="{{ carBrandModel }}"> </input>
+         <input type="hidden" id="licensePlate" name="licensePlate" value="{{ licensePlate }}"> </input>
          <table border="1" style="color: navy;" align="center">
             <tr>
                   <td>Spare Part Name</td>
-                  <td>Spare Part Cost in INR</td>
+                  <td>Spare Part Cost in Indian Rupees</td>
             </tr>
             {% for spare_part in spare_part_details %}
             <tr>
                   <td> {{ spare_part.part_name}}</td>
-                  <td> {{ spare_part.part_cost}}</td>
-               </tr>
+                  <td> {{ spare_part.part_cost}} </td>
+            </tr>
             {% endfor %}
+            <tr>
+               <b><td>Total Claim Cost</td></b>
+               </b><td>{{ totalSparesCost }} </td></b>
+            </tr>
          </table>
-         <tr>
-            <th>Total Claim Cost in INR</th>
-            <th>{{ totalSparesCost }}</th>
-            <input type="hidden" id="totalSparesCost" value="{{ totalSparesCost }}"> </input>
-         </tr>
+         <input type="hidden" id="totalSparesCost" value="{{ totalSparesCost }}"> </input>
          <br>
          <input type="submit" value="Raise Claim" /> 
          <br>

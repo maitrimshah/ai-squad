@@ -1,26 +1,107 @@
 <!DOCTYPE html>
 <html>
+   <head>
+      <style>
+         div{
+            padding-top: 0px;
+            padding-left: 30px;
+         }
+         body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            line-height: 1.5;
+            min-height: 70vh;
+            flex-direction: row;
+         }
+         
+         form {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            transition: transform 0.2s;
+            width: 500px;
+            text-align: center;
+         }
+         h3 {
+            color: navy;
+            text-align: center;
+         }
+         h4{
+            color: navy;
+            text-align: center;
+         }
+         .dropdown {
+            position: relative;
+            display: inline-block;
+         }
+   
+         .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+         }
+   
+         .dropdown:hover .dropdown-content {
+            display: block;
+         }
+        label {
+            display: block;
+            width: 50%;
+            text-align: left;
+            color: navy
+         }
+         input {
+            color: navy;
+            display: block;
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: auto;
+            display: block;
+         }
+         button {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: none;
+            color: navy;
+            cursor: pointer;
+            background-color: grey;
+            width: 100%;
+            font-size: 16px;
+         }
+      </style>
+   </head>
    <body>
       <form enctype="multipart/form-data" action="/submitClaim" method="POST">
-         <h1 style="color: navy;text-align:center;">Damage Detector,Repair Cost Estimator and Inventory Management System</h1>
-         <h3 style="color: navy;text-align:center;">AI SQUAD Team - Google Gen AI Hackathon 2024 </h3>
+         <h3>Vehicle Automated Insurance Claim System</h3>
+         <h4>AI SQUAD Team - Google Gen AI Hackathon 2024</h4>
          
-         <input type=text style="text-align:center;" id="brand" readonly>Brand</input>
-         <input type=text style="text-align:center;" id="model" readonly>Model</input>
-         <input type=text style="text-align:center;" id="totalSparesCost" readonly>Total Spares Cost</input>
-         <input type=hidden id="userId" value="{{ userId }}></input>
-         <input type=date style="text-align:center;" id="claimDate">Claim Date</input>
-         <input type=text style="text-align:center;" id="claimAmount">Claim Amount</input>
-         <input type=text style="text-align:center;" id="coverageAmount">Coverage Amount</input>
-         <input type=text style="text-align:center;" id="licensePlate">License Plate/input>
-         <input type=text style="text-align:center;" id="description">Description</input>
-         <input type=text style="text-align:center;" id="insurancePolicyStatus">Insurance Policy Status</input>
-         <input type=text style="text-align:center;" id="insuranceCompany">Insurance Company</input>
-         <input type=text style="text-align:center;" id="insuranceNumber">Insurance Number</input>
-         <input type=text style="text-align:center;" id="includedCoverages">Included Coverages</input>
-         <input type=date style="text-align:center;" id="policyRenewalStatus">Policy Renewal Date</input>
+         <input type=text style="text-align:center;" id="carBrandModel" readonly name="carBrandModel" value="{{carBrandModel}}">Car model</input>
+         <input type=hidden name="userId" id="userId" value="{{ userId }}"/>
+         <input type=date style="text-align:center;" name="claimDate">Claim Date</input>
+         <input type=text style="text-align:center;" name="claimAmount">Claim Amount</input>
+         <input type=text style="text-align:center;" name="coverageAmount">Coverage Amount</input>
+         <input type=text style="text-align:center;" name="licensePlate">License Plate</input>
+         <input type=text style="text-align:center;" name="description">Description</input>
+         <input type=text style="text-align:center;" name="insurancePolicyStatus">Insurance Policy Status</input>
+         <input type=text style="text-align:center;" name="insuranceCompany">Insurance Company</input>
+         <input type=text style="text-align:center;" name="insuranceNumber">Insurance Number</input>
+         <input type=date style="text-align:center;" name="insuranceExpiryDate">Insurance Expiry Date</input>
+         <input type=text style="text-align:center;" name="includedCoverages">Included Coverages</input>
+         <input type=date style="text-align:center;" name="policyRenewalDate">Policy Renewal Date</input>
          
-         <input type="submit" value="Raise Claim" /> 
+         <input type="submit" value="Submit Claim" /> 
       </form>
    </body>
 </html>
