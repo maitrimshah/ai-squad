@@ -88,31 +88,11 @@ def submitClaim():
     insuranceExpiryDate = request.form.get("insuranceExpiryDate")
     includedCoverages = request.form.get("includedCoverages")
     policyRenewalDate = request.form.get("policyRenewalDate")
+        
+    msg = "Claim details added successfully" 
+    return redirect('/')
     
-    bigDataQuery = "insert into cap-ai-squad.SQUAD_DS.claims_info (User_Id,Claim_Date,License_Plate,Description,Insurance_Policy_Status,Insurance_Company,Insurance_Number,Insurance_Expiry_Date,Included_Coverages,Policy_Renewal_Date_) VALUES ( '" + userId + "','" + claimDate + "','" +licensePlate+ "','" +description+ "','" +insurancePolicyStatus+ "','" +insuranceCompany+ "','" +insuranceNumber+ "','" +insuranceExpiryDate+ "','" +includedCoverages+ "','" +policyRenewalDate+ "')" 
-  
-    client = bigquery.Client()
-    query_job = client.query(bigDataQuery)  
-    
-    rows = query_job.result() 
-
-    user_details = []
-    for row in rows:
-        user_details.append(InsuranceResponse(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
-        d1 = datetime.strptime(row[10], "%Y/%m/%d")
-        d2 = datetime.strptime(datetime.datetime.now(), "%Y/%m/%d")
-        if d2-d1 < 0 :
-            msg = "Policy has already expired" 
-        else :
-            msg = "Claim details added successfully" + "Policy renewal date is " + row[12]
-            
-    return render_template('models.html',msg=msg)
 
 if __name__ == '__main__':
-    server_port = os.environ.get('PORT', '8080')
-    if os.environ.get('https_proxy'):
-        del os.environ['https_proxy']
-    if os.environ.get('http_proxy'):
-        del os.environ['http_proxy']
     app.run(debug=False, port=server_port, host='0.0.0.0')    
     
